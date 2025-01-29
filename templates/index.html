@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        {{ map|safe }}
+    </div>
+
+    <div id="card" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cardLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cardLabel">Point Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="card-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('a[title]').tooltip();
+
+            // Set up the popup
+            folium.plugins.Popup().add_to(m);
+
+            // Add click event to markers
+            m.on('click', function(e) {
+                var latlng = e.latlng;
+                fetch(`/card/${e.latlng.lat.toFixed(6)},${e.latlng.lng.toFixed(6)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        $('#card-content').html(`
+                            <h4>${data.name}</h4>
+                            <p>Latitude: ${data.latitude}, Longitude: ${data.longitude}</p>
+                            <p>${data.info}</p>
+                        `);
+                        $('#card').modal('show');
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
