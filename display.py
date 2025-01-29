@@ -11,14 +11,22 @@ engine = create_engine(DATABASE_URI)
 
 @app.route('/')
 def index():
+    """
+    This route is the entry point of the application. It fetches data from the database and renders a map with markers.
+    
+    Returns:
+        str: HTML content containing a folium map.
+    """
     # Fetch data from the database
     query = text("SELECT id, bssid, latitude, longitude, ssid FROM wifilist")  # Modify your query
     df = pd.read_sql_query(query, engine)
     
     # Create a base map
+    # Create a base map centered on the mean of the latitudes and longitudes in the dataset
     m = folium.Map(location=[df['latitude'].mean(), df['longitude'].mean()], zoom_start=13)
 
     # Add markers to the map
+    # Add markers to the map for each entry in the DataFrame
     for index, row in df.iterrows():
         folium.Marker(
             location=[row['latitude'], row['longitude']],
@@ -31,6 +39,15 @@ def index():
 
 @app.route('/card/<int:point_id>')
 def card(point_id):
+    """
+    This route retrieves detailed information about a specific WiFi point based on its ID.
+    
+    Args:
+        point_id (int): The ID of the WiFi point to retrieve details for.
+
+    Returns:
+        dict or tuple: JSON containing the WiFi point's details, or an error message with HTTP status code 404 if not found.
+    """
     query = text("SELECT id, timestamp, bssid, frequency_mhz, ssid, channel_bandwidth_mhz, latitude, longitude, accuracy, provider FROM wifilist WHERE id = :id")  # Modify your query
     with engine.connect() as conn:
         result = conn.execute(query, {'id': point_id}).fetchone()
