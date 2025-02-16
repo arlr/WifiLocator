@@ -3,28 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Map</title>
+    <title>Interactive WiFi Map</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="container">
-        {{ map|safe }}
-    </div>
+        <h2>Interactive WiFi Map</h2>
 
-    <div id="card" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cardLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cardLabel">Point Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="card-content"></div>
-            </div>
-        </div>
+        {{ map|safe }}
+
+        <!-- Add a link to the data table page -->
+        <a href="{{ url_for('data_table') }}" class="btn btn-default">View Data Table</a>
     </div>
 
     <script>
@@ -42,13 +34,15 @@
                     .then(data => {
                         $('#card-content').html(`
                             <h4>${data.name}</h4>
+                            <h4>${data.ssid}</h4>
                             <p>Latitude: ${data.latitude}, Longitude: ${data.longitude}</p>
                             <p>${data.info}</p>
+                            <p>BSSID: ${data.bssid}</p>
                         `);
                         $('#card').modal('show');
                     });
             });
-        });
+});
     </script>
 </body>
 </html>

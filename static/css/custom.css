@@ -1,0 +1,46 @@
+/* Custom CSS for styling the map and search form */
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+#card.modal-dialog {
+    max-width: 500px;
+}
+
+#card .modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#card .modal-header {
+    background-color: #007bff;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+#card .modal-title {
+    margin-bottom: 0;
+}
+
+#card .modal-body {
+    padding: 20px;
+}
+
+#card .close {
+    color: white;
+}
+
+/* Styling for the search form */
+.form-inline {
+    justify-content: center;
+}
+
+.form-control {
+    margin-left: 5px;
+}

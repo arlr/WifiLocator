@@ -1,0 +1,112 @@
+<!-- templates/data_table.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Data Table</title>
+    <!-- Include your CSS and JS links here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>WiFi Data Table</h2>
+
+        <!-- Your table code here -->
+        <table id="dataTable" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>BSSID</th>
+                    <th>Frequency MHz</th>
+                    <th>SSID</th>
+                    <th>Channel Bandwidth MHz</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Accuracy</th>
+                    <th>Provider</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be populated here by JavaScript -->
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-default" id="filterButton">Filter Data</button>
+
+    </div>
+
+    <script>
+$(document).ready(function() {
+    $('a[title]').tooltip();
+
+    // Load data into the table
+    function loadData() {
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                var tbody = $('#dataTable tbody');
+                tbody.empty();
+                
+                data.forEach(item => {
+                    tbody.append(`
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.timestamp}</td>
+                            <td>${item.bssid}</td>
+                            <td>${item.frequency_mhz}</td>
+                            <td>${item.ssid}</td>
+                            <td>${item.channel_bandwidth_mhz}</td>
+                            <td>${item.latitude}</td>
+                            <td>${item.longitude}</td>
+                            <td>${item.accuracy}</td>
+                            <td>${item.provider}</td>
+                        </tr>
+                    `);
+                });
+            });
+    }
+
+    loadData();
+
+    // Handle filter button click
+    $('#filterButton').on('click', function() {
+        var ssid = prompt("Enter SSID to filter:");
+        
+        if (ssid !== null && ssid !== '') {
+            fetch(`/data?ssid=${ssid}`)
+                .then(response => response.json())
+                .then(data => {
+                    var tbody = $('#dataTable tbody');
+                    tbody.empty();
+                    
+                    data.forEach(item => {
+                        tbody.append(`
+                            <tr>
+                                <td>${item.id}</td>
+                                <td>${item.timestamp}</td>
+                                <td>${item.bssid}</td>
+                                <td>${item.frequency_mhz}</td>
+                                <td>${item.ssid}</td>
+                                <td>${item.channel_bandwidth_mhz}</td>
+                                <td>${item.latitude}</td>
+                                <td>${item.longitude}</td>
+                                <td>${item.accuracy}</td>
+                                <td>${item.provider}</td>
+                            </tr>
+                        `);
+                    });
+                });
+        }
+    });
+});
+</script>
+
+<!-- Ensure the link is correctly referencing the 'data_table' endpoint -->
+<a href="{{ url_for('index') }}">Go to The Map</a>
+</body>
+</html>

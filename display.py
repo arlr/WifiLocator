@@ -22,11 +22,9 @@ def index():
     df = pd.read_sql_query(query, engine)
     
     # Create a base map
-    # Create a base map centered on the mean of the latitudes and longitudes in the dataset
     m = folium.Map(location=[df['latitude'].mean(), df['longitude'].mean()], zoom_start=13)
 
     # Add markers to the map
-    # Add markers to the map for each entry in the DataFrame
     for index, row in df.iterrows():
         folium.Marker(
             location=[row['latitude'], row['longitude']],
@@ -67,6 +65,31 @@ def card(point_id):
         })
     else:
         return jsonify({'error': 'Point not found'}), 404
+
+@app.route('/data')
+def data():
+    """
+    This route returns the entire dataset from the database as a JSON object.
+    
+    Returns:
+        dict: JSON containing the entire dataset.
+    """
+    query = text("SELECT * FROM wifilist")  # Modify your query
+    with engine.connect() as conn:
+        result = conn.execute(query).fetchall()
+    
+    data = [dict(row) for row in result]
+    return jsonify(data)
+
+@app.route('/data_table')
+def data_table():
+    """
+    This route renders the data table page.
+    
+    Returns:
+        HTML: The rendered data_table.html template.
+    """
+    return render_template('data_table.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
